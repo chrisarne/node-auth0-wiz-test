@@ -1,32 +1,21 @@
-#
-# Ubuntu Dockerfile
-#
-# https://github.com/dockerfile/ubuntu
-#
+# Use the official Ubuntu image as the base
+FROM ubuntu:20.04
 
-# Pull base image.
-FROM ubuntu:14.04
+# Set the working directory
+WORKDIR /app
 
-# Install.
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y build-essential && \
-  apt-get install -y software-properties-common && \
-  apt-get install -y byobu curl git htop man unzip vim wget && \
-  rm -rf /var/lib/apt/lists/*
+# Install necessary packages
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip
 
-# Add files.
-ADD root/.bashrc /root/.bashrc
-ADD root/.gitconfig /root/.gitconfig
-ADD root/.scripts /root/.scripts
+# Copy the requirements file2 into the container
+COPY requirements.txt /app/requirements.txt
 
-# Set environment variables.
-ENV HOME /root
+# Install any needed packages specified in requirements.txt
+RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
 
-# Define working directory.
-WORKDIR /root
+# Copy the rest of the application code into the container
+COPY . /app
 
-# Define default command.
-CMD ["bash"]
+# Set the entrypoint command to run the Python script
+CMD ["python3", "app.py"]
