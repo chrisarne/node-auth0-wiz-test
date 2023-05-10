@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       #SCAN_PATH: "." # Set the relative path in the repo to build the image from
-      POLICY: "Default vulnerabilities policy" # Set the desired Wiz-cli policy to use
+      POLICY: "Babylon IaC policy" # Set the desired Wiz-cli policy to use
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -28,5 +28,7 @@ jobs:
         WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
         WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
 
+    - name: Validate the Wiz command
+      run: echo "./wizcli docker scan --image $TAG --policy \"$POLICY\""
     - name: Run wiz-cli docker image scan
       run: ./wizcli docker scan --image $TAG --policy "$POLICY"
